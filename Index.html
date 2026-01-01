@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knead Creative Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a25;
+      --bg-card: #16161f;
+      --bg-hover: #1e1e2a;
+      --text-primary: #f4f4f6;
+      --text-secondary: #a0a0b0;
+      --text-muted: #6a6a7a;
+      --border-color: #2a2a3a;
+      --border-light: #3a3a4a;
+      --accent-purple: #a855f7;
+      --accent-purple-light: #c084fc;
+      --accent-green: #22c55e;
+      --accent-green-light: #4ade80;
+      --accent-amber: #f59e0b;
+      --accent-amber-light: #fbbf24;
+      --accent-blue: #3b82f6;
+      --accent-blue-light: #60a5fa;
+      --accent-red: #ef4444;
+      --accent-red-light: #f87171;
+      --accent-teal: #14b8a6;
+      --accent-teal-light: #2dd4bf;
+      --accent-orange: #f97316;
+      --accent-orange-light: #fb923c;
+      --gradient-purple: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+      --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+      --shadow-glow: 0 0 40px rgba(168, 85, 247, 0.2);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+    body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 600px; background: var(--gradient-glow); pointer-events: none; z-index: 0; }
+    .app-container { position: relative; z-index: 1; }
+    .header { background: rgba(10,10,15,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
+    .header-inner { max-width: 1500px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .logo-section { display: flex; align-items: center; gap: 14px; }
+    .logo-icon { width: 44px; height: 44px; background: var(--gradient-purple); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: var(--shadow-glow); animation: pulse-glow 3s ease-in-out infinite; }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(168,85,247,0.3); } 50% { box-shadow: 0 0 40px rgba(168,85,247,0.5); } }
+    .logo-text h1 { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, var(--text-primary), var(--text-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .logo-text p { font-size: 12px; color: var(--text-muted); }
+    .nav-tabs { display: flex; gap: 4px; background: var(--bg-tertiary); padding: 4px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); }
+    .nav-tab { padding: 10px 20px; border: none; background: transparent; color: var(--text-secondary); font-family: inherit; font-size: 14px; font-weight: 500; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+    .nav-tab:hover { color: var(--text-primary); background: var(--bg-hover); }
+    .nav-tab.active { background: var(--gradient-purple); color: white; }
+    .nav-tab .badge { background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+    .main-content { max-width: 1500px; margin: 0 auto; padding: 24px; }
+    .generate-grid { display: grid; grid-template-columns: 320px 1fr 380px; gap: 24px; }
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+    .card-body { padding: 12px; }
+    .filter-item { margin-bottom: 4px; }
+    .filter-btn { width: 100%; text-align: left; padding: 12px 16px; border: none; background: transparent; color: var(--text-secondary); font-family: inherit; font-size: 14px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px; }
+    .filter-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .filter-btn.active { background: var(--bg-tertiary); color: var(--text-primary); font-weight: 500; }
+    .filter-btn-content { flex: 1; display: flex; align-items: center; gap: 12px; }
+    .filter-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-purple { background: var(--accent-purple); }
+    .dot-green { background: var(--accent-green); }
+    .dot-amber { background: var(--accent-amber); }
+    .dot-blue { background: var(--accent-blue); }
+    .dot-red { background: var(--accent-red); }
+    .dot-teal { background: var(--accent-teal); }
+    .dot-orange { background: var(--accent-orange); }
+    .expand-arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; margin-left: auto; }
+    .expand-arrow.expanded { transform: rotate(180deg); }
+    .filter-details { display: none; padding: 12px 16px; margin: 4px 8px 8px 8px; background: var(--bg-tertiary); border-radius: var(--radius-sm); font-size: 12px; border-left: 3px solid var(--border-color); }
+    .filter-details.expanded { display: block; }
+    .filter-details.border-purple { border-left-color: var(--accent-purple); }
+    .filter-details.border-green { border-left-color: var(--accent-green); }
+    .filter-details.border-amber { border-left-color: var(--accent-amber); }
+    .filter-details.border-blue { border-left-color: var(--accent-blue); }
+    .filter-details.border-red { border-left-color: var(--accent-red); }
+    .filter-details.border-teal { border-left-color: var(--accent-teal); }
+    .filter-details.border-orange { border-left-color: var(--accent-orange); }
+    .detail-row { margin-bottom: 8px; }
+    .detail-label { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .detail-value { color: var(--text-secondary); line-height: 1.4; }
+    .barrier-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); }
+    .barrier-label { color: var(--accent-red-light); font-size: 10px; text-transform: uppercase; margin-bottom: 4px; }
+    .barrier-value { color: var(--text-secondary); font-style: italic; margin-bottom: 6px; }
+    .response-label { color: var(--accent-green-light); font-size: 10px; text-transform: uppercase; margin-bottom: 4px; }
+    .response-value { color: var(--text-secondary); }
+    .form-group { margin-bottom: 12px; }
+    .form-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .form-input, .form-textarea { width: 100%; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px; }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--accent-purple); }
+    .form-textarea { resize: none; min-height: 60px; }
+    .custom-campaign-item { background: var(--bg-tertiary); border-radius: var(--radius-sm); padding: 12px; margin: 8px 12px; border-left: 3px solid var(--accent-purple); }
+    .custom-campaign-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .custom-campaign-name { font-weight: 600; font-size: 14px; }
+    .custom-campaign-actions { display: flex; gap: 8px; }
+    .icon-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 4px; }
+    .icon-btn:hover { color: var(--text-primary); background: var(--bg-hover); }
+    .icon-btn.delete:hover { color: var(--accent-red); }
+    .btn-small { padding: 8px 14px; background: var(--gradient-purple); border: none; border-radius: var(--radius-sm); color: white; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; }
+    .btn-secondary { background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); }
+    .templates-section { display: flex; flex-direction: column; gap: 16px; }
+    .template-category { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; }
+    .template-category.border-purple { border-color: rgba(168,85,247,0.4); }
+    .template-category.border-green { border-color: rgba(34,197,94,0.4); }
+    .template-category.border-amber { border-color: rgba(245,158,11,0.4); }
+    .template-category.border-blue { border-color: rgba(59,130,246,0.4); }
+    .template-category.border-red { border-color: rgba(239,68,68,0.4); }
+    .template-category.border-teal { border-color: rgba(20,184,166,0.4); }
+    .template-category.border-orange { border-color: rgba(249,115,22,0.4); }
+    .category-header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .category-header:hover { background: var(--bg-hover); }
+    .category-info { display: flex; align-items: center; gap: 12px; }
+    .category-icon { font-size: 20px; }
+    .category-name { font-weight: 600; font-size: 15px; }
+    .category-count { background: var(--bg-tertiary); padding: 4px 10px; border-radius: 20px; font-size: 12px; color: var(--text-muted); }
+    .category-arrow { color: var(--text-muted); font-size: 12px; transition: transform 0.2s; }
+    .category-arrow.expanded { transform: rotate(180deg); }
+    .category-templates { border-top: 1px solid var(--border-color); display: none; }
+    .category-templates.expanded { display: block; }
+    .template-item { padding: 16px 20px; border-bottom: 1px solid var(--border-color); }
+    .template-item:last-child { border-bottom: none; }
+    .template-item:hover { background: var(--bg-hover); }
+    .template-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .template-text { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--text-secondary); line-height: 1.5; flex: 1; }
+    .template-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .template-tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+    .tag-purple { background: rgba(168,85,247,0.15); color: var(--accent-purple-light); }
+    .tag-green { background: rgba(34,197,94,0.15); color: var(--accent-green-light); }
+    .tag-amber { background: rgba(245,158,11,0.15); color: var(--accent-amber-light); }
+    .tag-blue { background: rgba(59,130,246,0.15); color: var(--accent-blue-light); }
+    .tag-red { background: rgba(239,68,68,0.15); color: var(--accent-red-light); }
+    .tag-teal { background: rgba(20,184,166,0.15); color: var(--accent-teal-light); }
+    .tag-orange { background: rgba(249,115,22,0.15); color: var(--accent-orange-light); }
+    .generate-btn { padding: 8px 16px; background: var(--gradient-purple); border: none; border-radius: var(--radius-sm); color: white; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .generate-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md), var(--shadow-glow); }
+    .hooks-panel { position: sticky; top: 100px; height: fit-content; }
+    .hooks-header { display: flex; align-items: center; justify-content: space-between; }
+    .clear-btn { background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; }
+    .hooks-empty { padding: 60px 20px; text-align: center; }
+    .hooks-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    .hooks-empty-text { color: var(--text-muted); font-size: 14px; }
+    .hooks-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; max-height: 600px; overflow-y: auto; }
+    .hook-card { padding: 16px; border-radius: var(--radius-md); border-left: 4px solid; }
+    .hook-card.motivator-guilt { background: rgba(168,85,247,0.08); border-left-color: var(--accent-purple); }
+    .hook-card.motivator-proof { background: rgba(34,197,94,0.08); border-left-color: var(--accent-green); }
+    .hook-card.motivator-premium { background: rgba(245,158,11,0.08); border-left-color: var(--accent-amber); }
+    .hook-card.motivator-value { background: rgba(59,130,246,0.08); border-left-color: var(--accent-blue); }
+    .hook-card.motivator-urgency { background: rgba(239,68,68,0.08); border-left-color: var(--accent-red); }
+    .hook-card.motivator-transformation { background: rgba(20,184,166,0.08); border-left-color: var(--accent-teal); }
+    .hook-motivator { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; font-weight: 600; }
+    .hook-motivator.motivator-guilt { color: var(--accent-purple-light); }
+    .hook-motivator.motivator-proof { color: var(--accent-green-light); }
+    .hook-motivator.motivator-premium { color: var(--accent-amber-light); }
+    .hook-motivator.motivator-value { color: var(--accent-blue-light); }
+    .hook-motivator.motivator-urgency { color: var(--accent-red-light); }
+    .hook-motivator.motivator-transformation { color: var(--accent-teal-light); }
+    .hook-textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; color: var(--text-primary); font-family: inherit; font-size: 14px; resize: none; }
+    .hook-textarea:focus { outline: none; border-color: var(--accent-purple); }
+    .hook-actions { display: flex; gap: 16px; margin-top: 12px; }
+    .hook-action-btn { background: none; border: none; color: var(--text-muted); font-family: inherit; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .hook-action-btn:hover { color: var(--text-primary); }
+    .hook-action-btn.primary { color: var(--accent-purple-light); font-weight: 500; }
+    .regenerate-btn { width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-secondary); font-family: inherit; font-size: 13px; cursor: pointer; margin-top: 8px; }
+    .scorecard-container { max-width: 900px; margin: 0 auto; }
+    .score-hero { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 40px; margin-bottom: 24px; position: relative; overflow: hidden; }
+    .score-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 200px; background: var(--gradient-glow); opacity: 0.5; }
+    .score-hero-content { position: relative; display: flex; align-items: center; justify-content: space-between; }
+    .score-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .score-subtitle { color: var(--text-muted); font-size: 15px; }
+    .score-value { font-size: 72px; font-weight: 700; line-height: 1; }
+    .score-value.high { color: var(--accent-green); }
+    .score-value.medium { color: var(--accent-amber); }
+    .score-value.low { color: var(--accent-red); }
+    .score-bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+    .score-bar-card { background: var(--bg-tertiary); border-radius: var(--radius-md); padding: 20px; }
+    .score-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .score-bar-label { font-size: 14px; color: var(--text-secondary); }
+    .score-bar-value { font-size: 16px; font-weight: 700; }
+    .score-bar-track { height: 8px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    .score-bar-fill.purple { background: var(--gradient-purple); }
+    .score-bar-fill.blue { background: linear-gradient(135deg, var(--accent-blue), #818cf8); }
+    .score-bar-fill.teal { background: linear-gradient(135deg, var(--accent-teal), #34d399); }
+    .gaps-alert { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 24px; }
+    .gaps-title { font-size: 15px; font-weight: 600; color: var(--accent-red-light); margin-bottom: 12px; }
+    .gaps-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .gap-tag { background: rgba(239,68,68,0.15); color: var(--accent-red-light); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+    .creatives-list-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); }
+    .creatives-list-header { padding: 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 16px; }
+    .creatives-empty { padding: 60px 20px; text-align: center; }
+    .creatives-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    .creatives-empty-text { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    .start-btn { padding: 12px 24px; background: var(--gradient-purple); border: none; border-radius: var(--radius-sm); color: white; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .creatives-list { max-height: 500px; overflow-y: auto; }
+    .creative-item { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; border-left: 4px solid transparent; }
+    .creative-item:hover { background: var(--bg-hover); }
+    .creative-item.motivator-guilt { border-left-color: var(--accent-purple); }
+    .creative-item.motivator-proof { border-left-color: var(--accent-green); }
+    .creative-item.motivator-premium { border-left-color: var(--accent-amber); }
+    .creative-item.motivator-value { border-left-color: var(--accent-blue); }
+    .creative-item.motivator-urgency { border-left-color: var(--accent-red); }
+    .creative-item.motivator-transformation { border-left-color: var(--accent-teal); }
+    .creative-content { flex: 1; }
+    .creative-hook { font-size: 14px; margin-bottom: 10px; line-height: 1.5; }
+    .creative-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .creative-tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+    .remove-btn { background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+    .remove-btn:hover { background: rgba(239,68,68,0.1); color: var(--accent-red); }
+    .matrix-container { max-width: 1100px; margin: 0 auto; }
+    .matrix-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; margin-bottom: 24px; }
+    .matrix-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .matrix-title { font-size: 22px; font-weight: 700; }
+    .matrix-subtitle { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+    .matrix-total-value { font-size: 36px; font-weight: 700; color: var(--accent-purple-light); }
+    .matrix-total-label { font-size: 13px; color: var(--text-muted); }
+    .matrix-table { width: 100%; border-collapse: separate; border-spacing: 8px; }
+    .matrix-table th { padding: 12px 8px; font-size: 12px; font-weight: 500; color: var(--text-muted); text-align: center; }
+    .matrix-table th .format-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+    .matrix-table td { text-align: center; padding: 4px; }
+    .matrix-table td:first-child { text-align: left; padding-left: 12px; }
+    .motivator-label { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
+    .matrix-cell { width: 56px; height: 56px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; margin: 0 auto; }
+    .matrix-cell.empty { background: rgba(239,68,68,0.1); color: var(--accent-red); }
+    .matrix-cell.light { background: rgba(245,158,11,0.15); color: var(--accent-amber); }
+    .matrix-cell.good { background: rgba(34,197,94,0.15); color: var(--accent-green); }
+    .matrix-cell.total { background: var(--bg-tertiary); color: var(--text-primary); }
+    .matrix-cell.grand-total { background: var(--gradient-purple); color: white; }
+    .treatment-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .treatment-card { background: var(--bg-tertiary); border-radius: var(--radius-md); padding: 20px; text-align: center; }
+    .treatment-card.empty { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+    .treatment-icon { font-size: 28px; margin-bottom: 8px; }
+    .treatment-name { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .treatment-count { font-size: 28px; font-weight: 700; }
+    .treatment-card.empty .treatment-count { color: var(--accent-red); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px; opacity: 0; visibility: hidden; transition: all 0.3s; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-xl); max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: transform 0.3s; }
+    .modal-overlay.active .modal { transform: translateY(0); }
+    .modal-header { padding: 24px; border-bottom: 1px solid var(--border-color); }
+    .modal-title { font-size: 20px; font-weight: 700; }
+    .modal-body { padding: 24px; }
+    .modal-section { margin-bottom: 24px; }
+    .modal-label { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .modal-label .hint { font-weight: 400; color: var(--text-muted); }
+    .modal-textarea { width: 100%; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; color: var(--text-primary); font-family: inherit; font-size: 14px; resize: none; }
+    .modal-textarea:focus { outline: none; border-color: var(--accent-purple); }
+    .option-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .option-btn { padding: 10px 16px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-secondary); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .option-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .option-btn.selected { background: var(--gradient-purple); border-color: var(--accent-purple); color: white; }
+    .option-btn.selected-blue { background: linear-gradient(135deg, var(--accent-blue), #818cf8); color: white; }
+    .option-btn.selected-teal { background: linear-gradient(135deg, var(--accent-teal), #34d399); color: white; }
+    .option-btn.grayed { opacity: 0.5; }
+    .option-btn.grayed.selected { opacity: 1; }
+    .mini-matrix { background: var(--bg-tertiary); border-radius: var(--radius-md); padding: 20px; }
+    .mini-matrix-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+    .mini-matrix-table { width: 100%; border-collapse: separate; border-spacing: 4px; }
+    .mini-matrix-table th { font-size: 16px; padding: 4px; }
+    .mini-cell { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin: 0 auto; }
+    .mini-cell.empty { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+    .mini-cell.light { background: rgba(245,158,11,0.15); color: var(--accent-amber); }
+    .mini-cell.good { background: rgba(34,197,94,0.15); color: var(--accent-green); }
+    .mini-cell.target { background: var(--gradient-purple); color: white; transform: scale(1.1); box-shadow: 0 0 16px rgba(168,85,247,0.4); }
+    .mini-matrix-hint { text-align: center; font-size: 12px; color: var(--accent-purple-light); margin-top: 12px; }
+    .modal-footer { padding: 24px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .modal-btn { flex: 1; padding: 14px 24px; border-radius: var(--radius-md); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .modal-btn.secondary { background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); }
+    .modal-btn.primary { background: var(--gradient-purple); border: none; color: white; }
+    .modal-btn.primary:disabled { background: var(--bg-tertiary); color: var(--text-muted); cursor: not-allowed; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+    .empty-state { padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+    .empty-state-icon { font-size: 24px; margin-bottom: 8px; opacity: 0.5; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo-section">
+          <div class="logo-icon">✨</div>
+          <div class="logo-text"><h1>Knead Creative Engine</h1><p>Hook Generator • Scorecard • Matrix</p></div>
+        </div>
+        <nav class="nav-tabs">
+          <button class="nav-tab active" data-tab="generate">💡 Generate</button>
+          <button class="nav-tab" data-tab="scorecard">📊 Scorecard</button>
+          <button class="nav-tab" data-tab="matrix">🧮 Matrix<span class="badge" id="matrix-badge" style="display:none;">0</span></button>
+        </nav>
+      </div>
+    </header>
+    <main class="main-content">
+      <div class="tab-content active" id="tab-generate">
+        <div class="generate-grid">
+          <aside class="sidebar">
+            <div class="card"><div class="card-header">🎯 Filter by Motivator</div><div class="card-body" id="motivator-filters"></div></div>
+            <div class="card"><div class="card-header">📅 Seasonal & Situational</div><div class="card-body" id="seasonal-filters"></div></div>
+            <div class="card">
+              <div class="card-header">🎨 Custom Campaigns</div>
+              <div id="custom-campaigns-list"></div>
+              <div id="custom-campaign-form" style="display:none;padding:12px;">
+                <div class="form-group"><label class="form-label">Campaign Name</label><input type="text" class="form-input" id="custom-name" placeholder="e.g., Heating Focus"></div>
+                <div class="form-group"><label class="form-label">Core Message</label><textarea class="form-textarea" id="custom-message" placeholder="What's the main message?"></textarea></div>
+                <div class="form-group"><label class="form-label">Target Audience</label><input type="text" class="form-input" id="custom-audience" placeholder="Who are you targeting?"></div>
+                <div style="display:flex;gap:8px;"><button class="btn-small btn-secondary" onclick="cancelCustomCampaign()" style="flex:1;">Cancel</button><button class="btn-small" onclick="saveCustomCampaign()" style="flex:1;">Save</button></div>
+              </div>
+              <div style="padding:12px;"><button class="btn-small btn-secondary" id="add-custom-btn" onclick="showCustomCampaignForm()">+ New Campaign</button></div>
+            </div>
+          </aside>
+          <section class="templates-section" id="templates-section"></section>
+          <aside class="hooks-panel">
+            <div class="card">
+              <div class="card-header hooks-header"><span>✨ Generated Hooks</span><button class="clear-btn" id="clear-hooks" style="display:none;">Clear</button></div>
+              <div id="hooks-container"><div class="hooks-empty"><div class="hooks-empty-icon">💡</div><p class="hooks-empty-text">Click "Generate" on any template</p></div></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+      <div class="tab-content" id="tab-scorecard">
+        <div class="scorecard-container">
+          <div class="score-hero">
+            <div class="score-hero-content">
+              <div><h2 class="score-title">Creative Diversification Score</h2><p class="score-subtitle"><span id="total-creatives">0</span> creatives in campaign</p></div>
+              <div class="score-value low" id="overall-score">0%</div>
+            </div>
+            <div class="score-bars">
+              <div class="score-bar-card"><div class="score-bar-header"><span class="score-bar-label">Motivator Coverage</span><span class="score-bar-value" id="motivator-score">0%</span></div><div class="score-bar-track"><div class="score-bar-fill purple" id="motivator-bar" style="width:0%"></div></div></div>
+              <div class="score-bar-card"><div class="score-bar-header"><span class="score-bar-label">Format Coverage</span><span class="score-bar-value" id="format-score">0%</span></div><div class="score-bar-track"><div class="score-bar-fill blue" id="format-bar" style="width:0%"></div></div></div>
+              <div class="score-bar-card"><div class="score-bar-header"><span class="score-bar-label">Treatment Coverage</span><span class="score-bar-value" id="treatment-score">0%</span></div><div class="score-bar-track"><div class="score-bar-fill teal" id="treatment-bar" style="width:0%"></div></div></div>
+            </div>
+          </div>
+          <div class="gaps-alert" id="gaps-alert" style="display:none;"><h3 class="gaps-title">⚠️ Coverage Gaps Detected</h3><div class="gaps-list" id="gaps-list"></div></div>
+          <div class="creatives-list-card"><div class="creatives-list-header">Campaign Creatives</div><div id="creatives-container"><div class="creatives-empty"><div class="creatives-empty-icon">📭</div><p class="creatives-empty-text">No creatives yet.</p><button class="start-btn" onclick="switchTab('generate')">Start Generating →</button></div></div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="tab-matrix">
+        <div class="matrix-container">
+          <div class="matrix-card">
+            <div class="matrix-header"><div><h2 class="matrix-title">Motivator × Format Matrix</h2><p class="matrix-subtitle">Red = gap • Amber = light • Green = good</p></div><div class="matrix-total"><div class="matrix-total-value" id="matrix-total">0</div><div class="matrix-total-label">total creatives</div></div></div>
+            <table class="matrix-table" id="matrix-table"></table>
+          </div>
+          <div class="matrix-card"><div class="matrix-header"><div><h2 class="matrix-title">Treatment Distribution</h2></div></div><div class="treatment-grid" id="treatment-grid"></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header"><h3 class="modal-title">Add to Campaign</h3></div>
+      <div class="modal-body">
+        <div class="modal-section"><label class="modal-label">Hook Copy</label><textarea class="modal-textarea" id="modal-hook" rows="3"></textarea></div>
+        <div class="modal-section"><label class="modal-label">Motivator<span class="hint" id="motivator-hint">(click to change)</span></label><div class="option-grid" id="modal-motivators"></div></div>
+        <div class="modal-section"><label class="modal-label">Format</label><div class="option-grid" id="modal-formats"></div></div>
+        <div class="modal-section"><label class="modal-label">Treatment</label><div class="option-grid" id="modal-treatments"></div></div>
+        <div class="modal-section"><div class="mini-matrix"><h4 class="mini-matrix-title">Live Matrix Preview</h4><table class="mini-matrix-table" id="mini-matrix-table"></table><p class="mini-matrix-hint" id="mini-matrix-hint"></p></div></div>
+      </div>
+      <div class="modal-footer"><button class="modal-btn secondary" onclick="closeModal()">Cancel</button><button class="modal-btn primary" id="add-creative-btn" disabled onclick="addCreative()">Add Creative</button></div>
+    </div>
+  </div>
+t.motivators.length]}); }
+      renderGeneratedHooks();
+    }
+    function generateSeasonalHooks(seasonalId, idx) {
+      const s = getSeasonalConfig(seasonalId);
+      const t = s.hookTemplates[idx];
+      const used = new Set(); generatedHooks = [];
+      for(let i=0;i<5;i++){ let ex, att=0; do{ ex=generateExample(t.template); att++; }while(used.has(ex)&&att<10); used.add(ex); generatedHooks.push({id:Date.now()+i,template:t.template,example:ex,motivator:t.motivators[i%t.motivators.length],seasonal:true}); }
+      renderGeneratedHooks();
+    }
+    function renderGeneratedHooks() {
+      const c = document.getElementById('hooks-container');
+      const cb = document.getElementById('clear-hooks');
+      if(generatedHooks.length===0){ cb.style.display='none'; c.innerHTML='<div class="hooks-empty"><div class="hooks-empty-icon">💡</div><p class="hooks-empty-text">Click "Generate" on any template</p></div>'; return; }
+      cb.style.display='block';
+      c.innerHTML = '<div class="hooks-list">'+generatedHooks.map((h,i) => {
+        const cfg = getMotivatorConfig(h.motivator);
+        return '<div class="hook-card motivator-'+h.motivator+' fade-in" style="animation-delay:'+i*0.05+'s"><div class="hook-motivator motivator-'+h.motivator+'"><span class="filter-dot '+cfg?.dotClass+'"></span>'+cfg?.shortName+(h.seasonal?' • Seasonal':'')+'</div><textarea class="hook-textarea" rows="3" onchange="updateHookText('+h.id+',this.value)">'+h.example+'</textarea><div class="hook-actions"><button class="hook-action-btn" onclick="copyHook('+i+')">📋 Copy</button><button class="hook-action-btn primary" onclick="openModal('+h.id+')">+ Add to Campaign</button></div></div>';
+      }).join('')+'<button class="regenerate-btn" onclick="regenerateHooks()">🔄 Regenerate</button></div>';
+    }
+    function updateHookText(id, val) { const h = generatedHooks.find(x=>x.id===id); if(h) h.example=val; }
+    function copyHook(i) { navigator.clipboard.writeText(generatedHooks[i].example); }
+    function regenerateHooks() {
+      if(generatedHooks.length===0) return;
+      const t = generatedHooks[0].template;
+      const mots = [...new Set(generatedHooks.map(h=>h.motivator))];
+      const isSeas = generatedHooks[0].seasonal;
+      const used = new Set(); generatedHooks = [];
+      for(let i=0;i<5;i++){ let ex, att=0; do{ ex=generateExample(t); att++; }while(used.has(ex)&&att<10); used.add(ex); generatedHooks.push({id:Date.now()+i,template:t,example:ex,motivator:mots[i%mots.length],seasonal:isSeas}); }
+      renderGeneratedHooks();
+    }
+    document.getElementById('clear-hooks').addEventListener('click', () => { generatedHooks=[]; renderGeneratedHooks(); });
+    function openModal(hookId) {
+      const h = generatedHooks.find(x=>x.id===hookId); if(!h) return;
+      modalHook=h.example; modalMotivator=h.motivator; modalFormat=null; modalTreatment=null; motivatorUnlocked=false;
+      document.getElementById('modal-hook').value=modalHook;
+      renderModalOptions(); renderMiniMatrix(); updateAddButton();
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
+    function renderModalOptions() {
+      const mc = document.getElementById('modal-motivators');
+      const fc = document.getElementById('modal-formats');
+      const tc = document.getElementById('modal-treatments');
+      document.getElementById('motivator-hint').textContent = motivatorUnlocked ? '(selecting)' : '(click to change)';
+      mc.innerHTML = motivatorClusters.map(m => { const sel=modalMotivator===m.id; const cls=['option-btn']; if(sel)cls.push('selected'); if(!motivatorUnlocked&&!sel)cls.push('grayed'); return '<button class="'+cls.join(' ')+'" onclick="selectMotivator(\''+m.id+'\')"><span class="filter-dot '+m.dotClass+'"></span>'+m.shortName+'</button>'; }).join('');
+      fc.innerHTML = formatOptions.map(f => '<button class="option-btn '+(modalFormat===f.id?'selected-blue':'')+'" onclick="selectFormat(\''+f.id+'\')">'+f.icon+' '+f.name+'</button>').join('');
+      tc.innerHTML = treatmentOptions.map(t => '<button class="option-btn '+(modalTreatment===t.id?'selected-teal':'')+'" onclick="selectTreatment(\''+t.id+'\')">'+t.icon+' '+t.name+'</button>').join('');
+    }
+    function selectMotivator(id) { if(!motivatorUnlocked&&modalMotivator!==id){ motivatorUnlocked=true; }else{ modalMotivator=id; motivatorUnlocked=false; } renderModalOptions(); renderMiniMatrix(); updateAddButton(); }
+    function selectFormat(id) { modalFormat=id; renderModalOptions(); renderMiniMatrix(); updateAddButton(); }
+    function selectTreatment(id) { modalTreatment=id; renderModalOptions(); updateAddButton(); }
+    function updateAddButton() { document.getElementById('add-creative-btn').disabled = !(modalMotivator&&modalFormat&&modalTreatment); }
+    function getMatrixData() { const mx={}; motivatorClusters.forEach(m=>{mx[m.id]={}; formatOptions.forEach(f=>{mx[m.id][f.id]=campaignCreatives.filter(c=>c.motivator===m.id&&c.format===f.id).length;}); }); return mx; }
+    function renderMiniMatrix() {
+      const mx = getMatrixData();
+      const tbl = document.getElementById('mini-matrix-table');
+      let html = '<thead><tr><th></th>'+formatOptions.map(f=>'<th>'+f.icon+'</th>').join('')+'</tr></thead><tbody>';
+      motivatorClusters.forEach(m => {
+        html += '<tr><td><span class="filter-dot '+m.dotClass+'"></span></td>';
+        formatOptions.forEach(f => {
+          const cnt = mx[m.id][f.id];
+          const isTgt = modalMotivator===m.id && modalFormat===f.id;
+          const proj = isTgt ? cnt+1 : cnt;
+          let cc = 'mini-cell ';
+          if(isTgt) cc+='target'; else if(proj===0) cc+='empty'; else if(proj===1) cc+='light'; else cc+='good';
+          html += '<td><div class="'+cc+'">'+(isTgt?'+'+proj:proj)+'</div></td>';
+        });
+        html += '</tr>';
+      });
+      html += '</tbody>';
+      tbl.innerHTML = html;
+      const hint = document.getElementById('mini-matrix-hint');
+      if(modalMotivator&&modalFormat){ const mc=getMotivatorConfig(modalMotivator); const fc=formatOptions.find(f=>f.id===modalFormat); hint.textContent='Adding to: '+mc?.shortName+' × '+fc?.name; } else { hint.textContent=''; }
+    }
+    function addCreative() {
+      const txt = document.getElementById('modal-hook').value;
+      campaignCreatives.push({id:Date.now(),hook:txt,motivator:modalMotivator,format:modalFormat,treatment:modalTreatment});
+      saveToStorage(); updateBadge(); closeModal();
+    }
+    function updateBadge() { const b=document.getElementById('matrix-badge'); if(campaignCreatives.length>0){b.style.display='inline';b.textContent=campaignCreatives.length;}else{b.style.display='none';} }
+    function updateScorecard() {
+      const tot = campaignCreatives.length;
+      document.getElementById('total-creatives').textContent = tot;
+      if(tot===0){ document.getElementById('overall-score').textContent='0%'; document.getElementById('overall-score').className='score-value low'; document.getElementById('motivator-score').textContent='0%'; document.getElementById('format-score').textContent='0%'; document.getElementById('treatment-score').textContent='0%'; document.getElementById('motivator-bar').style.width='0%'; document.getElementById('format-bar').style.width='0%'; document.getElementById('treatment-bar').style.width='0%'; document.getElementById('gaps-alert').style.display='none'; document.getElementById('creatives-container').innerHTML='<div class="creatives-empty"><div class="creatives-empty-icon">📭</div><p class="creatives-empty-text">No creatives yet.</p><button class="start-btn" onclick="switchTab(\'generate\')">Start Generating →</button></div>'; return; }
+      const motCov = motivatorClusters.filter(m=>campaignCreatives.some(c=>c.motivator===m.id)).length / motivatorClusters.length;
+      const fmtCov = formatOptions.filter(f=>campaignCreatives.some(c=>c.format===f.id)).length / formatOptions.length;
+      const trtCov = treatmentOptions.filter(t=>campaignCreatives.some(c=>c.treatment===t.id)).length / treatmentOptions.length;
+      const overall = Math.round((motCov+fmtCov+trtCov)/3*100);
+      document.getElementById('overall-score').textContent = overall+'%';
+      document.getElementById('overall-score').className = 'score-value '+(overall>=80?'high':overall>=50?'medium':'low');
+      document.getElementById('motivator-score').textContent = Math.round(motCov*100)+'%';
+      document.getElementById('format-score').textContent = Math.round(fmtCov*100)+'%';
+      document.getElementById('treatment-score').textContent = Math.round(trtCov*100)+'%';
+      document.getElementById('motivator-bar').style.width = (motCov*100)+'%';
+      document.getElementById('format-bar').style.width = (fmtCov*100)+'%';
+      document.getElementById('treatment-bar').style.width = (trtCov*100)+'%';
+      const gaps=[], mx=getMatrixData();
+      motivatorClusters.forEach(m=>{ if(!formatOptions.some(f=>mx[m.id][f.id]>0)) gaps.push({type:'motivator',name:m.name}); });
+      formatOptions.forEach(f=>{ if(!motivatorClusters.some(m=>mx[m.id][f.id]>0)) gaps.push({type:'format',name:f.name}); });
+      const ga=document.getElementById('gaps-alert'), gl=document.getElementById('gaps-list');
+      if(gaps.length>0){ ga.style.display='block'; gl.innerHTML=gaps.map(g=>'<span class="gap-tag">'+(g.type==='motivator'?'🎯':'📹')+' '+g.name+'</span>').join(''); } else { ga.style.display='none'; }
+      document.getElementById('creatives-container').innerHTML = '<div class="creatives-list">'+campaignCreatives.map(c=>{
+        const mc=getMotivatorConfig(c.motivator), fc=formatOptions.find(f=>f.id===c.format), tc=treatmentOptions.find(t=>t.id===c.treatment);
+        return '<div class="creative-item motivator-'+c.motivator+'"><div class="creative-content"><p class="creative-hook">'+c.hook+'</p><div class="creative-tags"><span class="creative-tag '+mc?.tagClass+'">'+mc?.shortName+'</span><span class="creative-tag tag-blue">'+fc?.icon+' '+fc?.name+'</span><span class="creative-tag tag-teal">'+tc?.icon+' '+tc?.name+'</span></div></div><button class="remove-btn" onclick="removeCreative('+c.id+')">✕</button></div>';
+      }).join('')+'</div>';
+    }
+    function removeCreative(id) { campaignCreatives=campaignCreatives.filter(c=>c.id!==id); saveToStorage(); updateBadge(); updateScorecard(); updateMatrix(); }
+    function updateMatrix() {
+      const mx=getMatrixData(), tbl=document.getElementById('matrix-table'), tg=document.getElementById('treatment-grid');
+      document.getElementById('matrix-total').textContent = campaignCreatives.length;
+      let html = '<thead><tr><th></th>'+formatOptions.map(f=>'<th><span class="format-icon">'+f.icon+'</span>'+f.name+'</th>').join('')+'<th>Total</th></tr></thead><tbody>';
+      motivatorClusters.forEach(m=>{
+        const rt = formatOptions.reduce((s,f)=>s+mx[m.id][f.id],0);
+        html += '<tr><td><div class="motivator-label"><span class="filter-dot '+m.dotClass+'"></span>'+m.shortName+'</div></td>';
+        formatOptions.forEach(f=>{ const cnt=mx[m.id][f.id]; html+='<td><div class="matrix-cell '+(cnt===0?'empty':cnt===1?'light':'good')+'">'+cnt+'</div></td>'; });
+        html += '<td><div class="matrix-cell total">'+rt+'</div></td></tr>';
+      });
+      html += '<tr><td><strong>Total</strong></td>';
+      formatOptions.forEach(f=>{ const ct=motivatorClusters.reduce((s,m)=>s+mx[m.id][f.id],0); html+='<td><div class="matrix-cell total">'+ct+'</div></td>'; });
+      html += '<td><div class="matrix-cell grand-total">'+campaignCreatives.length+'</div></td></tr></tbody>';
+      tbl.innerHTML = html;
+      tg.innerHTML = treatmentOptions.map(t=>{ const cnt=campaignCreatives.filter(c=>c.treatment===t.id).length; return '<div class="treatment-card '+(cnt===0?'empty':'')+'"><div class="treatment-icon">'+t.icon+'</div><div class="treatment-name">'+t.name+'</div><div class="treatment-count">'+cnt+'</div></div>'; }).join('');
+    }
+    document.getElementById('modal-hook').addEventListener('input', e => { modalHook = e.target.value; });
+    loadFromStorage();
+    renderMotivatorFilters();
+    renderSeasonalFilters();
+    renderCustomCampaigns();
+    renderTemplates();
+    renderGeneratedHooks();
+    updateBadge();
+  </script>
+</body>
+</html>
