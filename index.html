@@ -1,0 +1,2248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knead Creative Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a25;
+      --bg-card: #16161f;
+      --bg-hover: #1e1e2a;
+      --text-primary: #f4f4f6;
+      --text-secondary: #a0a0b0;
+      --text-muted: #6a6a7a;
+      --border-color: #2a2a3a;
+      --border-light: #3a3a4a;
+      --accent-purple: #a855f7;
+      --accent-purple-light: #c084fc;
+      --accent-green: #22c55e;
+      --accent-green-light: #4ade80;
+      --accent-amber: #f59e0b;
+      --accent-amber-light: #fbbf24;
+      --accent-blue: #3b82f6;
+      --accent-blue-light: #60a5fa;
+      --accent-red: #ef4444;
+      --accent-red-light: #f87171;
+      --accent-teal: #14b8a6;
+      --accent-teal-light: #2dd4bf;
+      --gradient-purple: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+      --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+      --shadow-glow: 0 0 40px rgba(168, 85, 247, 0.2);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 600px;
+      background: var(--gradient-glow);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--gradient-purple);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: var(--shadow-glow);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.5); }
+    }
+
+    .logo-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-tertiary);
+      padding: 4px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-tab {
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    .nav-tab.active {
+      background: var(--gradient-purple);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-tab .badge {
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Generate Tab Layout */
+    .generate-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr 380px;
+      gap: 24px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-body {
+      padding: 12px;
+    }
+
+    .filter-btn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .filter-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .filter-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-purple { background: var(--accent-purple); }
+    .dot-green { background: var(--accent-green); }
+    .dot-amber { background: var(--accent-amber); }
+    .dot-blue { background: var(--accent-blue); }
+    .dot-red { background: var(--accent-red); }
+    .dot-teal { background: var(--accent-teal); }
+
+    /* Templates */
+    .templates-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .template-category {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .template-category:hover {
+      border-color: var(--border-light);
+    }
+
+    .category-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .category-header:hover {
+      background: var(--bg-hover);
+    }
+
+    .category-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .category-icon {
+      font-size: 20px;
+    }
+
+    .category-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .category-count {
+      background: var(--bg-tertiary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .category-arrow {
+      color: var(--text-muted);
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .category-arrow.expanded {
+      transform: rotate(180deg);
+    }
+
+    .category-templates {
+      border-top: 1px solid var(--border-color);
+      display: none;
+    }
+
+    .category-templates.expanded {
+      display: block;
+    }
+
+    .template-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      transition: background 0.15s ease;
+    }
+
+    .template-item:last-child {
+      border-bottom: none;
+    }
+
+    .template-item:hover {
+      background: var(--bg-hover);
+    }
+
+    .template-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .template-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .template-tags {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .template-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .tag-purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple-light); }
+    .tag-green { background: rgba(34, 197, 94, 0.15); color: var(--accent-green-light); }
+    .tag-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber-light); }
+    .tag-blue { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue-light); }
+    .tag-red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red-light); }
+    .tag-teal { background: rgba(20, 184, 166, 0.15); color: var(--accent-teal-light); }
+
+    .generate-btn {
+      padding: 8px 16px;
+      background: var(--gradient-purple);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md), var(--shadow-glow);
+    }
+
+    /* Generated Hooks */
+    .hooks-panel {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+    }
+
+    .hooks-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .clear-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .hooks-empty {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .hooks-empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .hooks-empty-text {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .hooks-list {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .hook-card {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border-left: 4px solid;
+      transition: all 0.2s ease;
+    }
+
+    .hook-card.motivator-guilt { 
+      background: rgba(168, 85, 247, 0.08); 
+      border-left-color: var(--accent-purple); 
+    }
+    .hook-card.motivator-proof { 
+      background: rgba(34, 197, 94, 0.08); 
+      border-left-color: var(--accent-green); 
+    }
+    .hook-card.motivator-premium { 
+      background: rgba(245, 158, 11, 0.08); 
+      border-left-color: var(--accent-amber); 
+    }
+    .hook-card.motivator-value { 
+      background: rgba(59, 130, 246, 0.08); 
+      border-left-color: var(--accent-blue); 
+    }
+    .hook-card.motivator-urgency { 
+      background: rgba(239, 68, 68, 0.08); 
+      border-left-color: var(--accent-red); 
+    }
+    .hook-card.motivator-transformation { 
+      background: rgba(20, 184, 166, 0.08); 
+      border-left-color: var(--accent-teal); 
+    }
+
+    .hook-motivator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .hook-motivator.motivator-guilt { color: var(--accent-purple-light); }
+    .hook-motivator.motivator-proof { color: var(--accent-green-light); }
+    .hook-motivator.motivator-premium { color: var(--accent-amber-light); }
+    .hook-motivator.motivator-value { color: var(--accent-blue-light); }
+    .hook-motivator.motivator-urgency { color: var(--accent-red-light); }
+    .hook-motivator.motivator-transformation { color: var(--accent-teal-light); }
+
+    .hook-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      transition: all 0.15s ease;
+    }
+
+    .hook-textarea:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+
+    .hook-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .hook-action-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hook-action-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .hook-action-btn.primary {
+      color: var(--accent-purple-light);
+      font-weight: 500;
+    }
+
+    .hook-action-btn.primary:hover {
+      color: var(--accent-purple);
+    }
+
+    .regenerate-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-top: 8px;
+    }
+
+    .regenerate-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    /* Scorecard Tab */
+    .scorecard-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .score-hero {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
+      background: var(--gradient-glow);
+      opacity: 0.5;
+    }
+
+    .score-hero-content {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .score-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .score-subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .score-value {
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .score-value.high { color: var(--accent-green); }
+    .score-value.medium { color: var(--accent-amber); }
+    .score-value.low { color: var(--accent-red); }
+
+    .score-bars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .score-bar-card {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .score-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .score-bar-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .score-bar-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .score-bar-track {
+      height: 8px;
+      background: var(--bg-primary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .score-bar-fill.purple { background: var(--gradient-purple); }
+    .score-bar-fill.blue { background: linear-gradient(135deg, var(--accent-blue) 0%, #818cf8 100%); }
+    .score-bar-fill.teal { background: linear-gradient(135deg, var(--accent-teal) 0%, #34d399 100%); }
+
+    .gaps-alert {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .gaps-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent-red-light);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gaps-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .gap-tag {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--accent-red-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .creatives-list-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+    }
+
+    .creatives-list-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .creatives-empty {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .creatives-empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .creatives-empty-text {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .start-btn {
+      padding: 12px 24px;
+      background: var(--gradient-purple);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md), var(--shadow-glow);
+    }
+
+    .creatives-list {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .creative-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      border-left: 4px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .creative-item:hover {
+      background: var(--bg-hover);
+    }
+
+    .creative-item:last-child {
+      border-bottom: none;
+    }
+
+    .creative-item.motivator-guilt { border-left-color: var(--accent-purple); }
+    .creative-item.motivator-proof { border-left-color: var(--accent-green); }
+    .creative-item.motivator-premium { border-left-color: var(--accent-amber); }
+    .creative-item.motivator-value { border-left-color: var(--accent-blue); }
+    .creative-item.motivator-urgency { border-left-color: var(--accent-red); }
+    .creative-item.motivator-transformation { border-left-color: var(--accent-teal); }
+
+    .creative-content {
+      flex: 1;
+    }
+
+    .creative-hook {
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .creative-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .creative-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .remove-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--accent-red);
+    }
+
+    /* Matrix Tab */
+    .matrix-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .matrix-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .matrix-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .matrix-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .matrix-subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .matrix-total {
+      text-align: right;
+    }
+
+    .matrix-total-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent-purple-light);
+    }
+
+    .matrix-total-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 8px;
+    }
+
+    .matrix-table th {
+      padding: 12px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .matrix-table th .format-icon {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .matrix-table td {
+      text-align: center;
+      padding: 4px;
+    }
+
+    .matrix-table td:first-child {
+      text-align: left;
+      padding-left: 12px;
+    }
+
+    .motivator-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .matrix-cell {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 auto;
+      transition: all 0.2s ease;
+    }
+
+    .matrix-cell.empty {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--accent-red);
+    }
+
+    .matrix-cell.light {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+    }
+
+    .matrix-cell.good {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--accent-green);
+    }
+
+    .matrix-cell.total {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .matrix-cell.grand-total {
+      background: var(--gradient-purple);
+      color: white;
+    }
+
+    .treatment-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .treatment-card {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .treatment-card.empty {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .treatment-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .treatment-name {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .treatment-count {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .treatment-card.empty .treatment-count {
+      color: var(--accent-red);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-section {
+      margin-bottom: 24px;
+    }
+
+    .modal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .modal-label {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-label .hint {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .modal-textarea {
+      width: 100%;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      transition: all 0.15s ease;
+    }
+
+    .modal-textarea:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+
+    .option-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .option-btn {
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .option-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .option-btn.selected {
+      background: var(--gradient-purple);
+      border-color: var(--accent-purple);
+      color: white;
+    }
+
+    .option-btn.selected-blue {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, #818cf8 100%);
+      border-color: var(--accent-blue);
+      color: white;
+    }
+
+    .option-btn.selected-teal {
+      background: linear-gradient(135deg, var(--accent-teal) 0%, #34d399 100%);
+      border-color: var(--accent-teal);
+      color: white;
+    }
+
+    .option-btn.grayed {
+      opacity: 0.5;
+    }
+
+    .option-btn.grayed.selected {
+      opacity: 1;
+    }
+
+    .mini-matrix {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .mini-matrix-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .mini-matrix-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 4px;
+    }
+
+    .mini-matrix-table th {
+      font-size: 16px;
+      padding: 4px;
+    }
+
+    .mini-matrix-table td {
+      padding: 2px;
+    }
+
+    .mini-cell {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0 auto;
+      transition: all 0.2s ease;
+    }
+
+    .mini-cell.empty { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+    .mini-cell.light { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .mini-cell.good { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); }
+    .mini-cell.target {
+      background: var(--gradient-purple);
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+    }
+
+    .mini-matrix-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--accent-purple-light);
+      margin-top: 12px;
+    }
+
+    .modal-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-btn.secondary {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .modal-btn.secondary:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .modal-btn.primary {
+      background: var(--gradient-purple);
+      border: none;
+      color: white;
+    }
+
+    .modal-btn.primary:hover {
+      box-shadow: var(--shadow-md), var(--shadow-glow);
+    }
+
+    .modal-btn.primary:disabled {
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Hidden tabs */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-light);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo-section">
+          <div class="logo-icon">✨</div>
+          <div class="logo-text">
+            <h1>Knead Creative Engine</h1>
+            <p>Hook Generator • Scorecard • Matrix</p>
+          </div>
+        </div>
+        <nav class="nav-tabs">
+          <button class="nav-tab active" data-tab="generate">💡 Generate</button>
+          <button class="nav-tab" data-tab="scorecard">📊 Scorecard</button>
+          <button class="nav-tab" data-tab="matrix">
+            🧮 Matrix
+            <span class="badge" id="matrix-badge" style="display: none;">0</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Generate Tab -->
+      <div class="tab-content active" id="tab-generate">
+        <div class="generate-grid">
+          <!-- Left Sidebar -->
+          <aside class="sidebar">
+            <div class="card">
+              <div class="card-header">🎯 Filter by Motivator</div>
+              <div class="card-body" id="motivator-filters">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </aside>
+
+          <!-- Templates -->
+          <section class="templates-section" id="templates-section">
+            <!-- Populated by JS -->
+          </section>
+
+          <!-- Generated Hooks -->
+          <aside class="hooks-panel">
+            <div class="card">
+              <div class="card-header hooks-header">
+                <span>✨ Generated Hooks</span>
+                <button class="clear-btn" id="clear-hooks" style="display: none;">Clear</button>
+              </div>
+              <div id="hooks-container">
+                <div class="hooks-empty">
+                  <div class="hooks-empty-icon">💡</div>
+                  <p class="hooks-empty-text">Click "Generate" on any template</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Scorecard Tab -->
+      <div class="tab-content" id="tab-scorecard">
+        <div class="scorecard-container">
+          <div class="score-hero">
+            <div class="score-hero-content">
+              <div>
+                <h2 class="score-title">Creative Diversification Score</h2>
+                <p class="score-subtitle"><span id="total-creatives">0</span> creatives in campaign</p>
+              </div>
+              <div class="score-value low" id="overall-score">0%</div>
+            </div>
+            <div class="score-bars">
+              <div class="score-bar-card">
+                <div class="score-bar-header">
+                  <span class="score-bar-label">Motivator Coverage</span>
+                  <span class="score-bar-value" id="motivator-score">0%</span>
+                </div>
+                <div class="score-bar-track">
+                  <div class="score-bar-fill purple" id="motivator-bar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="score-bar-card">
+                <div class="score-bar-header">
+                  <span class="score-bar-label">Format Coverage</span>
+                  <span class="score-bar-value" id="format-score">0%</span>
+                </div>
+                <div class="score-bar-track">
+                  <div class="score-bar-fill blue" id="format-bar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="score-bar-card">
+                <div class="score-bar-header">
+                  <span class="score-bar-label">Treatment Coverage</span>
+                  <span class="score-bar-value" id="treatment-score">0%</span>
+                </div>
+                <div class="score-bar-track">
+                  <div class="score-bar-fill teal" id="treatment-bar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="gaps-alert" id="gaps-alert" style="display: none;">
+            <h3 class="gaps-title">⚠️ Coverage Gaps Detected</h3>
+            <div class="gaps-list" id="gaps-list"></div>
+          </div>
+
+          <div class="creatives-list-card">
+            <div class="creatives-list-header">Campaign Creatives</div>
+            <div id="creatives-container">
+              <div class="creatives-empty">
+                <div class="creatives-empty-icon">📭</div>
+                <p class="creatives-empty-text">No creatives yet. Generate hooks and add them to your campaign.</p>
+                <button class="start-btn" onclick="switchTab('generate')">Start Generating →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matrix Tab -->
+      <div class="tab-content" id="tab-matrix">
+        <div class="matrix-container">
+          <div class="matrix-card">
+            <div class="matrix-header">
+              <div>
+                <h2 class="matrix-title">Motivator × Format Matrix</h2>
+                <p class="matrix-subtitle">Red = gap • Amber = light • Green = good coverage</p>
+              </div>
+              <div class="matrix-total">
+                <div class="matrix-total-value" id="matrix-total">0</div>
+                <div class="matrix-total-label">total creatives</div>
+              </div>
+            </div>
+            <table class="matrix-table" id="matrix-table">
+              <!-- Populated by JS -->
+            </table>
+          </div>
+
+          <div class="matrix-card">
+            <div class="matrix-header">
+              <div>
+                <h2 class="matrix-title">Treatment Distribution</h2>
+              </div>
+            </div>
+            <div class="treatment-grid" id="treatment-grid">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add to Campaign</h3>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <label class="modal-label">Hook Copy</label>
+          <textarea class="modal-textarea" id="modal-hook" rows="3"></textarea>
+        </div>
+        <div class="modal-section">
+          <label class="modal-label">
+            Motivator
+            <span class="hint" id="motivator-hint">(click to change)</span>
+          </label>
+          <div class="option-grid" id="modal-motivators"></div>
+        </div>
+        <div class="modal-section">
+          <label class="modal-label">Format</label>
+          <div class="option-grid" id="modal-formats"></div>
+        </div>
+        <div class="modal-section">
+          <label class="modal-label">Treatment</label>
+          <div class="option-grid" id="modal-treatments"></div>
+        </div>
+        <div class="modal-section">
+          <div class="mini-matrix">
+            <h4 class="mini-matrix-title">Live Matrix Preview</h4>
+            <table class="mini-matrix-table" id="mini-matrix-table"></table>
+            <p class="mini-matrix-hint" id="mini-matrix-hint"></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn primary" id="add-creative-btn" disabled onclick="addCreative()">Add Creative</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data
+    const motivatorClusters = [
+      { id: 'guilt', name: 'Guilt & Redemption', shortName: 'Guilt', dotClass: 'dot-purple', tagClass: 'tag-purple' },
+      { id: 'proof', name: 'Proof & Validation', shortName: 'Proof', dotClass: 'dot-green', tagClass: 'tag-green' },
+      { id: 'premium', name: 'Premium Devotion', shortName: 'Premium', dotClass: 'dot-amber', tagClass: 'tag-amber' },
+      { id: 'value', name: 'Smart Investment', shortName: 'Value', dotClass: 'dot-blue', tagClass: 'tag-blue' },
+      { id: 'urgency', name: 'Urgency & Action', shortName: 'Urgency', dotClass: 'dot-red', tagClass: 'tag-red' },
+      { id: 'transformation', name: 'Transformation', shortName: 'Transform', dotClass: 'dot-teal', tagClass: 'tag-teal' },
+    ];
+
+    const formatOptions = [
+      { id: 'ugc', name: 'UGC Video', icon: '🎥' },
+      { id: 'static', name: 'Static', icon: '🖼️' },
+      { id: 'carousel', name: 'Carousel', icon: '📱' },
+      { id: 'reels', name: 'Reels', icon: '📹' },
+      { id: 'demo', name: 'Demo', icon: '📦' },
+      { id: 'expert', name: 'Expert', icon: '👨‍⚕️' },
+    ];
+
+    const treatmentOptions = [
+      { id: 'lofi', name: 'Lo-fi', icon: '📱' },
+      { id: 'polished', name: 'Polished', icon: '✨' },
+      { id: 'ai', name: 'AI Gen', icon: '🤖' },
+      { id: 'text', name: 'Text', icon: '📝' },
+      { id: 'lifestyle', name: 'Lifestyle', icon: '🏠' },
+    ];
+
+    const hookTemplates = {
+      question: {
+        name: 'Question Hooks',
+        icon: '❓',
+        templates: [
+          { template: 'Is your [subject] [hidden problem]?', motivators: ['guilt'] },
+          { template: 'Did you know [surprising stat]?', motivators: ['proof'] },
+          { template: 'Have you noticed [subtle symptom] in your [subject]?', motivators: ['guilt'] },
+          { template: 'Would you know if your [subject] was [problem]?', motivators: ['guilt'] },
+          { template: 'What if [negative outcome] could be [positive outcome]?', motivators: ['transformation'] },
+          { template: 'How much is [outcome] worth to you?', motivators: ['value', 'premium'] },
+        ]
+      },
+      statement: {
+        name: 'Statement Hooks',
+        icon: '💬',
+        templates: [
+          { template: 'I had no idea [revelation] until [discovery moment].', motivators: ['guilt', 'transformation'] },
+          { template: '[Subject] are hiding [problem] and you\'d never know.', motivators: ['guilt'] },
+          { template: '[Stat]% of [audience] have [problem]. Here\'s what works.', motivators: ['proof'] },
+          { template: 'The only [product category] with [differentiator].', motivators: ['proof', 'premium'] },
+          { template: 'This isn\'t a [common category]. It\'s [elevated category].', motivators: ['premium'] },
+        ]
+      },
+      pov: {
+        name: 'POV Hooks',
+        icon: '👁️',
+        templates: [
+          { template: 'POV: You just realized [painful truth].', motivators: ['guilt'] },
+          { template: 'POV: You finally found [solution] for [problem].', motivators: ['transformation'] },
+          { template: 'POV: Your [subject] acts like a [younger version] again.', motivators: ['transformation'] },
+          { template: 'POV: [Product] just arrived and your [subject] [reaction].', motivators: ['transformation', 'premium'] },
+        ]
+      },
+      emotional: {
+        name: 'Emotional & Guilt',
+        icon: '💜',
+        templates: [
+          { template: 'I felt terrible when I realized [painful truth].', motivators: ['guilt'] },
+          { template: 'You didn\'t miss the signs. [Subject] hid them from you.', motivators: ['guilt'] },
+          { template: 'It\'s not too late to [positive action].', motivators: ['urgency', 'transformation'] },
+          { template: 'They have given you [years]. Give them [benefit].', motivators: ['guilt', 'premium'] },
+        ]
+      },
+      social: {
+        name: 'Social Proof',
+        icon: '⭐',
+        templates: [
+          { template: '"[Testimonial quote]" — [Name], [identifier]', motivators: ['proof'] },
+          { template: '[Number]+ [audience] can\'t be wrong.', motivators: ['proof'] },
+          { template: 'I was skeptical too. Then [transformation].', motivators: ['proof', 'transformation'] },
+          { template: 'My [professional] recommended this for [problem].', motivators: ['proof'] },
+        ]
+      },
+      value: {
+        name: 'Value & Objection',
+        icon: '💰',
+        templates: [
+          { template: 'Yes, it\'s $[price]. Here\'s why it\'s worth it.', motivators: ['value'] },
+          { template: 'Cheaper than [comparative cost] and [benefit].', motivators: ['value'] },
+          { template: 'Stop replacing cheap [products]. Invest in [quality].', motivators: ['value', 'premium'] },
+        ]
+      },
+      urgency: {
+        name: 'Urgency & Seasonal',
+        icon: '⏰',
+        templates: [
+          { template: '[Season] hits [problem] hardest. Here\'s how to help.', motivators: ['urgency'] },
+          { template: 'Don\'t wait until [negative outcome] to [action].', motivators: ['urgency', 'guilt'] },
+          { template: 'The cold is coming. Is your [subject] ready?', motivators: ['urgency'] },
+        ]
+      },
+      interrupt: {
+        name: 'Pattern Interrupt',
+        icon: '🛑',
+        templates: [
+          { template: 'Wait. Your [subject] does this too?', motivators: ['guilt', 'proof'] },
+          { template: 'This is going to sound crazy, but [claim].', motivators: ['transformation', 'proof'] },
+          { template: 'Not me crying over [emotional trigger].', motivators: ['guilt', 'transformation'] },
+        ]
+      }
+    };
+
+    const variablePools = {
+      subject: ['cat', 'senior cat', 'arthritic cat', 'fur baby', 'aging cat', 'beloved cat'],
+      problem: ['arthritis', 'joint pain', 'stiffness', 'mobility issues', 'chronic pain'],
+      hidden_problem: ['hiding their pain from you', 'suffering in silence', 'masking their discomfort'],
+      symptom: ['stopped jumping', 'sleeping more', 'hesitating before jumps', 'moving slower'],
+      subtle_symptom: ['hesitating before they jump', 'taking the long way down', 'sleeping in lower spots'],
+      solution: ['therapeutic heat', 'infrared therapy', 'the Knead bed', 'targeted warmth'],
+      surprising_stat: ['90% of cats over 12 have arthritis', '60% of cats over 6 have joint issues', '82% showed improvement in our clinical study'],
+      benefit: ['pain relief', 'mobility', 'comfort', 'quality of life', 'playfulness'],
+      outcome: ['another year of comfortable life', 'watching them play again', 'seeing them jump on the bed'],
+      timeframe: ['6 weeks', '42 days', 'just weeks'],
+      price: ['299', '249'],
+      differentiator: ['clinical validation', 'infrared technology', 'vet-developed design'],
+      revelation: ['my cat was in pain', 'she\'d been hurting for years', 'arthritis was the cause'],
+      discovery_moment: ['she stopped jumping on my bed', 'I saw her struggle with stairs', 'the vet explained it'],
+      painful_truth: ['your cat\'s been in pain for years', 'they\'ve been suffering silently', 'you might have missed the signs'],
+      positive_outcome: ['relieved in 6 weeks', 'moving freely again', 'back to their old self'],
+      negative_outcome: ['your cat\'s stiffness', 'their limited mobility', 'watching them struggle'],
+      transformation: ['my cat jumped on the bed for the first time in a year', 'she started playing again'],
+      testimonial_quote: ['She\'s acting like a kitten again', 'I can\'t believe the difference', 'Worth every penny'],
+      name: ['Sarah', 'Mike', 'Jennifer', 'David', 'Lisa'],
+      identifier: ['mom to 14yo Whiskers', 'parent of senior tabby Max', 'owner of 12yo Luna'],
+      number: ['3', '4', '5', '7', '1000'],
+      claim: ['my cat\'s bed changed her life', 'a heated bed fixed everything'],
+      emotional_trigger: ['watching my senior cat play again', 'seeing her jump up without hesitating'],
+      years: ['15 years of love', 'a lifetime of companionship', 'years of unconditional love'],
+      positive_action: ['help them', 'make a change', 'give them relief'],
+      younger_version: ['kitten', '5-year-old', 'young cat'],
+      reaction: ['won\'t get out of it', 'claimed it immediately'],
+      audience: ['cats over 12', 'senior cats', 'aging cats'],
+      product_category: ['heated cat bed', 'therapeutic pet bed'],
+      common_category: ['cat bed', 'pet bed'],
+      elevated_category: ['therapeutic device', 'medical-grade solution'],
+      professional: ['vet', 'veterinarian'],
+      comparative_cost: ['one vet visit', 'monthly medications'],
+      products: ['heated beds', 'cat beds'],
+      quality: ['one that lasts', 'something that works'],
+      season: ['Winter', 'Cold weather'],
+      action: ['get help', 'act'],
+      stat: ['60', '82', '90'],
+    };
+
+    // State
+    let selectedMotivator = null;
+    let generatedHooks = [];
+    let campaignCreatives = [];
+    let expandedCategories = {};
+    
+    // Modal state
+    let modalHook = '';
+    let modalMotivator = null;
+    let modalFormat = null;
+    let modalTreatment = null;
+    let motivatorUnlocked = false;
+
+    // Helper functions
+    const randomFrom = arr => arr[Math.floor(Math.random() * arr.length)];
+    
+    const getMotivatorConfig = id => motivatorClusters.find(m => m.id === id);
+
+    const generateExample = template => {
+      let example = template;
+      const replacements = {
+        '[subject]': randomFrom(variablePools.subject),
+        '[problem]': randomFrom(variablePools.problem),
+        '[hidden problem]': randomFrom(variablePools.hidden_problem),
+        '[symptom]': randomFrom(variablePools.symptom),
+        '[subtle symptom]': randomFrom(variablePools.subtle_symptom),
+        '[solution]': randomFrom(variablePools.solution),
+        '[surprising stat]': randomFrom(variablePools.surprising_stat),
+        '[Stat]': randomFrom(variablePools.stat),
+        '[benefit]': randomFrom(variablePools.benefit),
+        '[outcome]': randomFrom(variablePools.outcome),
+        '[price]': randomFrom(variablePools.price),
+        '[differentiator]': randomFrom(variablePools.differentiator),
+        '[revelation]': randomFrom(variablePools.revelation),
+        '[discovery moment]': randomFrom(variablePools.discovery_moment),
+        '[painful truth]': randomFrom(variablePools.painful_truth),
+        '[positive outcome]': randomFrom(variablePools.positive_outcome),
+        '[negative outcome]': randomFrom(variablePools.negative_outcome),
+        '[transformation]': randomFrom(variablePools.transformation),
+        '[Testimonial quote]': randomFrom(variablePools.testimonial_quote),
+        '[Name]': randomFrom(variablePools.name),
+        '[identifier]': randomFrom(variablePools.identifier),
+        '[Number]': randomFrom(variablePools.number),
+        '[claim]': randomFrom(variablePools.claim),
+        '[emotional trigger]': randomFrom(variablePools.emotional_trigger),
+        '[years]': randomFrom(variablePools.years),
+        '[positive action]': randomFrom(variablePools.positive_action),
+        '[younger version]': randomFrom(variablePools.younger_version),
+        '[reaction]': randomFrom(variablePools.reaction),
+        '[audience]': randomFrom(variablePools.audience),
+        '[product category]': randomFrom(variablePools.product_category),
+        '[common category]': randomFrom(variablePools.common_category),
+        '[elevated category]': randomFrom(variablePools.elevated_category),
+        '[professional]': randomFrom(variablePools.professional),
+        '[comparative cost]': randomFrom(variablePools.comparative_cost),
+        '[products]': randomFrom(variablePools.products),
+        '[quality]': randomFrom(variablePools.quality),
+        '[Season]': randomFrom(variablePools.season),
+        '[action]': randomFrom(variablePools.action),
+        '[Subject]': 'Cats',
+        '[Product]': 'The Knead bed',
+      };
+
+      Object.entries(replacements).forEach(([key, value]) => {
+        example = example.replace(new RegExp(key.replace(/[[\]]/g, '\\$&'), 'g'), value);
+      });
+      
+      return example;
+    };
+
+    // Tab switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === `tab-${tabId}`);
+      });
+      if (tabId === 'scorecard' || tabId === 'matrix') {
+        updateScorecard();
+        updateMatrix();
+      }
+    }
+
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // Render motivator filters
+    function renderMotivatorFilters() {
+      const container = document.getElementById('motivator-filters');
+      container.innerHTML = `
+        <button class="filter-btn ${!selectedMotivator ? 'active' : ''}" onclick="filterByMotivator(null)">
+          All Motivators
+        </button>
+        ${motivatorClusters.map(m => `
+          <button class="filter-btn ${selectedMotivator === m.id ? 'active' : ''}" onclick="filterByMotivator('${m.id}')">
+            <span class="filter-dot ${m.dotClass}"></span>
+            ${m.name}
+          </button>
+        `).join('')}
+      `;
+    }
+
+    function filterByMotivator(motivatorId) {
+      selectedMotivator = motivatorId;
+      renderMotivatorFilters();
+      renderTemplates();
+    }
+
+    // Render templates
+    function renderTemplates() {
+      const container = document.getElementById('templates-section');
+      let html = '';
+
+      Object.entries(hookTemplates).forEach(([key, category]) => {
+        let templates = category.templates;
+        if (selectedMotivator) {
+          templates = templates.filter(t => t.motivators.includes(selectedMotivator));
+        }
+        if (templates.length === 0) return;
+
+        const isExpanded = expandedCategories[key];
+        html += `
+          <div class="template-category">
+            <div class="category-header" onclick="toggleCategory('${key}')">
+              <div class="category-info">
+                <span class="category-icon">${category.icon}</span>
+                <span class="category-name">${category.name}</span>
+                <span class="category-count">${templates.length}</span>
+              </div>
+              <span class="category-arrow ${isExpanded ? 'expanded' : ''}">▼</span>
+            </div>
+            <div class="category-templates ${isExpanded ? 'expanded' : ''}">
+              ${templates.map((t, idx) => `
+                <div class="template-item">
+                  <div class="template-row">
+                    <div class="template-content">
+                      <p class="template-text">${t.template}</p>
+                      <div class="template-tags">
+                        ${t.motivators.map(m => {
+                          const config = getMotivatorConfig(m);
+                          return `<span class="template-tag ${config?.tagClass}">${config?.shortName}</span>`;
+                        }).join('')}
+                      </div>
+                    </div>
+                    <button class="generate-btn" onclick="generateHooks('${key}', ${idx})">
+                      ⚡ Generate
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function toggleCategory(key) {
+      expandedCategories[key] = !expandedCategories[key];
+      renderTemplates();
+    }
+
+    // Generate hooks
+    function generateHooks(categoryKey, templateIdx) {
+      let templates = hookTemplates[categoryKey].templates;
+      if (selectedMotivator) {
+        templates = templates.filter(t => t.motivators.includes(selectedMotivator));
+      }
+      const template = templates[templateIdx];
+      
+      const usedExamples = new Set();
+      generatedHooks = [];
+
+      for (let i = 0; i < 5; i++) {
+        let example;
+        let attempts = 0;
+        do {
+          example = generateExample(template.template);
+          attempts++;
+        } while (usedExamples.has(example) && attempts < 10);
+        
+        usedExamples.add(example);
+        const assignedMotivator = template.motivators[i % template.motivators.length];
+        
+        generatedHooks.push({
+          id: Date.now() + i,
+          template: template.template,
+          example,
+          motivator: assignedMotivator
+        });
+      }
+
+      renderGeneratedHooks();
+    }
+
+    function renderGeneratedHooks() {
+      const container = document.getElementById('hooks-container');
+      const clearBtn = document.getElementById('clear-hooks');
+
+      if (generatedHooks.length === 0) {
+        clearBtn.style.display = 'none';
+        container.innerHTML = `
+          <div class="hooks-empty">
+            <div class="hooks-empty-icon">💡</div>
+            <p class="hooks-empty-text">Click "Generate" on any template</p>
+          </div>
+        `;
+        return;
+      }
+
+      clearBtn.style.display = 'block';
+      container.innerHTML = `
+        <div class="hooks-list">
+          ${generatedHooks.map((hook, idx) => {
+            const config = getMotivatorConfig(hook.motivator);
+            return `
+              <div class="hook-card motivator-${hook.motivator} fade-in" style="animation-delay: ${idx * 0.05}s">
+                <div class="hook-motivator motivator-${hook.motivator}">
+                  <span class="filter-dot ${config?.dotClass}"></span>
+                  ${config?.shortName}
+                </div>
+                <textarea class="hook-textarea" rows="3" onchange="updateHookText(${hook.id}, this.value)">${hook.example}</textarea>
+                <div class="hook-actions">
+                  <button class="hook-action-btn" onclick="copyHook(${idx})">📋 Copy</button>
+                  <button class="hook-action-btn primary" onclick="openModal(${hook.id})">+ Add to Campaign</button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+          <button class="regenerate-btn" onclick="regenerateHooks()">🔄 Regenerate</button>
+        </div>
+      `;
+    }
+
+    function updateHookText(id, newText) {
+      const hook = generatedHooks.find(h => h.id === id);
+      if (hook) hook.example = newText;
+    }
+
+    function copyHook(idx) {
+      navigator.clipboard.writeText(generatedHooks[idx].example);
+    }
+
+    function regenerateHooks() {
+      if (generatedHooks.length === 0) return;
+      const template = generatedHooks[0].template;
+      const motivators = [...new Set(generatedHooks.map(h => h.motivator))];
+      
+      const usedExamples = new Set();
+      generatedHooks = [];
+
+      for (let i = 0; i < 5; i++) {
+        let example;
+        let attempts = 0;
+        do {
+          example = generateExample(template);
+          attempts++;
+        } while (usedExamples.has(example) && attempts < 10);
+        
+        usedExamples.add(example);
+        
+        generatedHooks.push({
+          id: Date.now() + i,
+          template,
+          example,
+          motivator: motivators[i % motivators.length]
+        });
+      }
+
+      renderGeneratedHooks();
+    }
+
+    document.getElementById('clear-hooks').addEventListener('click', () => {
+      generatedHooks = [];
+      renderGeneratedHooks();
+    });
+
+    // Modal
+    function openModal(hookId) {
+      const hook = generatedHooks.find(h => h.id === hookId);
+      if (!hook) return;
+
+      modalHook = hook.example;
+      modalMotivator = hook.motivator;
+      modalFormat = null;
+      modalTreatment = null;
+      motivatorUnlocked = false;
+
+      document.getElementById('modal-hook').value = modalHook;
+      renderModalOptions();
+      renderMiniMatrix();
+      updateAddButton();
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    function renderModalOptions() {
+      const motivatorsContainer = document.getElementById('modal-motivators');
+      const formatsContainer = document.getElementById('modal-formats');
+      const treatmentsContainer = document.getElementById('modal-treatments');
+      const hint = document.getElementById('motivator-hint');
+
+      hint.textContent = motivatorUnlocked ? '(selecting)' : '(click to change)';
+
+      motivatorsContainer.innerHTML = motivatorClusters.map(m => {
+        const isSelected = modalMotivator === m.id;
+        const classes = ['option-btn'];
+        if (isSelected) classes.push('selected');
+        if (!motivatorUnlocked && !isSelected) classes.push('grayed');
+        return `
+          <button class="${classes.join(' ')}" onclick="selectMotivator('${m.id}')">
+            <span class="filter-dot ${m.dotClass}"></span>
+            ${m.shortName}
+          </button>
+        `;
+      }).join('');
+
+      formatsContainer.innerHTML = formatOptions.map(f => `
+        <button class="option-btn ${modalFormat === f.id ? 'selected-blue' : ''}" onclick="selectFormat('${f.id}')">
+          ${f.icon} ${f.name}
+        </button>
+      `).join('');
+
+      treatmentsContainer.innerHTML = treatmentOptions.map(t => `
+        <button class="option-btn ${modalTreatment === t.id ? 'selected-teal' : ''}" onclick="selectTreatment('${t.id}')">
+          ${t.icon} ${t.name}
+        </button>
+      `).join('');
+    }
+
+    function selectMotivator(id) {
+      if (!motivatorUnlocked && modalMotivator !== id) {
+        motivatorUnlocked = true;
+      } else {
+        modalMotivator = id;
+        motivatorUnlocked = false;
+      }
+      renderModalOptions();
+      renderMiniMatrix();
+      updateAddButton();
+    }
+
+    function selectFormat(id) {
+      modalFormat = id;
+      renderModalOptions();
+      renderMiniMatrix();
+      updateAddButton();
+    }
+
+    function selectTreatment(id) {
+      modalTreatment = id;
+      renderModalOptions();
+      updateAddButton();
+    }
+
+    function updateAddButton() {
+      const btn = document.getElementById('add-creative-btn');
+      btn.disabled = !(modalMotivator && modalFormat && modalTreatment);
+    }
+
+    function getMatrixData() {
+      const matrix = {};
+      motivatorClusters.forEach(m => {
+        matrix[m.id] = {};
+        formatOptions.forEach(f => {
+          matrix[m.id][f.id] = campaignCreatives.filter(
+            c => c.motivator === m.id && c.format === f.id
+          ).length;
+        });
+      });
+      return matrix;
+    }
+
+    function renderMiniMatrix() {
+      const matrix = getMatrixData();
+      const table = document.getElementById('mini-matrix-table');
+      const hint = document.getElementById('mini-matrix-hint');
+
+      let html = '<thead><tr><th></th>';
+      formatOptions.forEach(f => {
+        html += `<th>${f.icon}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+
+      motivatorClusters.forEach(m => {
+        html += `<tr><td><span class="filter-dot ${m.dotClass}"></span></td>`;
+        formatOptions.forEach(f => {
+          const count = matrix[m.id][f.id];
+          const isTarget = modalMotivator === m.id && modalFormat === f.id;
+          const projected = isTarget ? count + 1 : count;
+          let cellClass = 'mini-cell ';
+          if (isTarget) {
+            cellClass += 'target';
+          } else if (projected === 0) {
+            cellClass += 'empty';
+          } else if (projected === 1) {
+            cellClass += 'light';
+          } else {
+            cellClass += 'good';
+          }
+          html += `<td><div class="${cellClass}">${isTarget ? '+' + projected : projected}</div></td>`;
+        });
+        html += '</tr>';
+      });
+
+      html += '</tbody>';
+      table.innerHTML = html;
+
+      if (modalMotivator && modalFormat) {
+        const mConfig = getMotivatorConfig(modalMotivator);
+        const fConfig = formatOptions.find(f => f.id === modalFormat);
+        hint.textContent = `Adding to: ${mConfig?.shortName} × ${fConfig?.name}`;
+      } else {
+        hint.textContent = '';
+      }
+    }
+
+    function addCreative() {
+      const hookText = document.getElementById('modal-hook').value;
+      campaignCreatives.push({
+        id: Date.now(),
+        hook: hookText,
+        motivator: modalMotivator,
+        format: modalFormat,
+        treatment: modalTreatment
+      });
+
+      updateBadge();
+      closeModal();
+    }
+
+    function updateBadge() {
+      const badge = document.getElementById('matrix-badge');
+      if (campaignCreatives.length > 0) {
+        badge.style.display = 'inline';
+        badge.textContent = campaignCreatives.length;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // Scorecard
+    function updateScorecard() {
+      const total = campaignCreatives.length;
+      document.getElementById('total-creatives').textContent = total;
+
+      if (total === 0) {
+        document.getElementById('overall-score').textContent = '0%';
+        document.getElementById('overall-score').className = 'score-value low';
+        document.getElementById('motivator-score').textContent = '0%';
+        document.getElementById('format-score').textContent = '0%';
+        document.getElementById('treatment-score').textContent = '0%';
+        document.getElementById('motivator-bar').style.width = '0%';
+        document.getElementById('format-bar').style.width = '0%';
+        document.getElementById('treatment-bar').style.width = '0%';
+        document.getElementById('gaps-alert').style.display = 'none';
+        document.getElementById('creatives-container').innerHTML = `
+          <div class="creatives-empty">
+            <div class="creatives-empty-icon">📭</div>
+            <p class="creatives-empty-text">No creatives yet. Generate hooks and add them to your campaign.</p>
+            <button class="start-btn" onclick="switchTab('generate')">Start Generating →</button>
+          </div>
+        `;
+        return;
+      }
+
+      const motivatorCoverage = motivatorClusters.filter(m => 
+        campaignCreatives.some(c => c.motivator === m.id)
+      ).length / motivatorClusters.length;
+
+      const formatCoverage = formatOptions.filter(f => 
+        campaignCreatives.some(c => c.format === f.id)
+      ).length / formatOptions.length;
+
+      const treatmentCoverage = treatmentOptions.filter(t => 
+        campaignCreatives.some(c => c.treatment === t.id)
+      ).length / treatmentOptions.length;
+
+      const overall = Math.round((motivatorCoverage + formatCoverage + treatmentCoverage) / 3 * 100);
+
+      document.getElementById('overall-score').textContent = overall + '%';
+      document.getElementById('overall-score').className = 'score-value ' + (overall >= 80 ? 'high' : overall >= 50 ? 'medium' : 'low');
+
+      document.getElementById('motivator-score').textContent = Math.round(motivatorCoverage * 100) + '%';
+      document.getElementById('format-score').textContent = Math.round(formatCoverage * 100) + '%';
+      document.getElementById('treatment-score').textContent = Math.round(treatmentCoverage * 100) + '%';
+
+      document.getElementById('motivator-bar').style.width = (motivatorCoverage * 100) + '%';
+      document.getElementById('format-bar').style.width = (formatCoverage * 100) + '%';
+      document.getElementById('treatment-bar').style.width = (treatmentCoverage * 100) + '%';
+
+      // Gaps
+      const gaps = [];
+      const matrix = getMatrixData();
+      motivatorClusters.forEach(m => {
+        const hasAny = formatOptions.some(f => matrix[m.id][f.id] > 0);
+        if (!hasAny) gaps.push({ type: 'motivator', name: m.name });
+      });
+      formatOptions.forEach(f => {
+        const hasAny = motivatorClusters.some(m => matrix[m.id][f.id] > 0);
+        if (!hasAny) gaps.push({ type: 'format', name: f.name });
+      });
+
+      const gapsAlert = document.getElementById('gaps-alert');
+      const gapsList = document.getElementById('gaps-list');
+      if (gaps.length > 0) {
+        gapsAlert.style.display = 'block';
+        gapsList.innerHTML = gaps.map(g => 
+          `<span class="gap-tag">${g.type === 'motivator' ? '🎯' : '📹'} ${g.name}</span>`
+        ).join('');
+      } else {
+        gapsAlert.style.display = 'none';
+      }
+
+      // Creatives list
+      document.getElementById('creatives-container').innerHTML = `
+        <div class="creatives-list">
+          ${campaignCreatives.map(c => {
+            const mConfig = getMotivatorConfig(c.motivator);
+            const fConfig = formatOptions.find(f => f.id === c.format);
+            const tConfig = treatmentOptions.find(t => t.id === c.treatment);
+            return `
+              <div class="creative-item motivator-${c.motivator}">
+                <div class="creative-content">
+                  <p class="creative-hook">${c.hook}</p>
+                  <div class="creative-tags">
+                    <span class="creative-tag ${mConfig?.tagClass}">${mConfig?.shortName}</span>
+                    <span class="creative-tag tag-blue">${fConfig?.icon} ${fConfig?.name}</span>
+                    <span class="creative-tag tag-teal">${tConfig?.icon} ${tConfig?.name}</span>
+                  </div>
+                </div>
+                <button class="remove-btn" onclick="removeCreative(${c.id})">✕</button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function removeCreative(id) {
+      campaignCreatives = campaignCreatives.filter(c => c.id !== id);
+      updateBadge();
+      updateScorecard();
+      updateMatrix();
+    }
+
+    // Matrix
+    function updateMatrix() {
+      const matrix = getMatrixData();
+      const table = document.getElementById('matrix-table');
+      const treatmentGrid = document.getElementById('treatment-grid');
+
+      document.getElementById('matrix-total').textContent = campaignCreatives.length;
+
+      let html = '<thead><tr><th></th>';
+      formatOptions.forEach(f => {
+        html += `<th><span class="format-icon">${f.icon}</span>${f.name}</th>`;
+      });
+      html += '<th>Total</th></tr></thead><tbody>';
+
+      motivatorClusters.forEach(m => {
+        const rowTotal = formatOptions.reduce((sum, f) => sum + matrix[m.id][f.id], 0);
+        html += `<tr>
+          <td><div class="motivator-label"><span class="filter-dot ${m.dotClass}"></span>${m.shortName}</div></td>`;
+        
+        formatOptions.forEach(f => {
+          const count = matrix[m.id][f.id];
+          const cellClass = count === 0 ? 'empty' : count === 1 ? 'light' : 'good';
+          html += `<td><div class="matrix-cell ${cellClass}">${count}</div></td>`;
+        });
+        
+        html += `<td><div class="matrix-cell total">${rowTotal}</div></td></tr>`;
+      });
+
+      // Totals row
+      html += '<tr><td><strong>Total</strong></td>';
+      formatOptions.forEach(f => {
+        const colTotal = motivatorClusters.reduce((sum, m) => sum + matrix[m.id][f.id], 0);
+        html += `<td><div class="matrix-cell total">${colTotal}</div></td>`;
+      });
+      html += `<td><div class="matrix-cell grand-total">${campaignCreatives.length}</div></td></tr>`;
+
+      html += '</tbody>';
+      table.innerHTML = html;
+
+      // Treatment grid
+      treatmentGrid.innerHTML = treatmentOptions.map(t => {
+        const count = campaignCreatives.filter(c => c.treatment === t.id).length;
+        return `
+          <div class="treatment-card ${count === 0 ? 'empty' : ''}">
+            <div class="treatment-icon">${t.icon}</div>
+            <div class="treatment-name">${t.name}</div>
+            <div class="treatment-count">${count}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Hook change listener
+    document.getElementById('modal-hook').addEventListener('input', e => {
+      modalHook = e.target.value;
+    });
+
+    // Initialize
+    renderMotivatorFilters();
+    renderTemplates();
+    renderGeneratedHooks();
+  </script>
+</body>
+</html>
